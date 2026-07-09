@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miaulissa 🐾 Día Feliz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #FFF3EE;
+    --frosting: #F7AFC7;
+    --hot-pink: #E6285F;
+    --wine: #6B1B3A;
+    --gold: #F4C862;
+    --line: rgba(107,27,58,0.12);
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  body{
+    background: radial-gradient(1200px 800px at 50% -10%, #FFE3EE 0%, var(--cream) 55%);
+    font-family: 'Quicksand', sans-serif;
+    color: var(--wine);
+    min-height: 100vh;
+    padding: 40px 18px 80px;
+    overflow-x:hidden;
+  }
+
+  /* floating paw/heart ambience */
+  .ambient{
+    position: fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
+  }
+  .ambient span{
+    position:absolute; font-size: 22px; opacity:.18; animation: drift linear infinite;
+  }
+  @keyframes drift{
+    from{ transform: translateY(110vh) rotate(0deg); }
+    to{ transform: translateY(-10vh) rotate(360deg); }
+  }
+
+  .wrap{ max-width: 640px; margin: 0 auto; position:relative; z-index:1; }
+
+  /* ---------- HERO ---------- */
+  .hero{ text-align:center; margin-bottom: 46px; }
+  .hero .eyebrow{
+    font-family:'Caveat', cursive; font-size: 26px; color: var(--hot-pink);
+    display:block; margin-bottom:4px;
+  }
+  .hero h1{
+    font-family:'Fredoka', sans-serif; font-weight:700;
+    font-size: clamp(38px, 9vw, 58px);
+    color: var(--hot-pink);
+    letter-spacing: -1px;
+    line-height: 1.02;
+    text-shadow: 3px 3px 0 rgba(230,40,95,0.12);
+  }
+  .hero h1 .glow{ color: var(--wine); }
+  .hero p.sub{
+    margin-top: 12px; font-size: 17px; font-weight:600; color: var(--wine); opacity:.85;
+  }
+
+  .clock-pill{
+    display:inline-flex; align-items:center; gap:8px;
+    margin-top: 22px; padding: 10px 20px;
+    background: #fff; border: 2px solid var(--frosting);
+    border-radius: 999px; font-family:'Fredoka'; font-weight:600; font-size:15px;
+    color: var(--wine); box-shadow: 0 4px 0 var(--frosting);
+  }
+  .clock-pill .dot{ width:8px; height:8px; border-radius:50%; background: var(--hot-pink); animation: pulse 1.4s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.25} }
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{ display:flex; flex-direction:column; gap: 26px; }
+
+  .card{
+    position:relative;
+    background:#fff;
+    border-radius: 22px;
+    padding: 26px 26px 24px;
+    box-shadow: 0 10px 30px rgba(107,27,58,0.08);
+    border: 1px solid var(--line);
+    transition: transform .4s ease;
+  }
+
+  /* scalloped "frosting" edge top */
+  .card::before{
+    content:"";
+    position:absolute; left:14px; right:14px; top:-11px; height:22px;
+    background-image: radial-gradient(circle at 10px 10px, var(--frosting) 9px, transparent 9.5px);
+    background-size: 20px 20px;
+    background-repeat: repeat-x;
+    background-position: left center;
+    opacity:.9;
+  }
+
+  .card-top{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-bottom: 14px;
+  }
+  .time-badge{
+    font-family:'Fredoka'; font-weight:600; font-size: 15px;
+    background: var(--wine); color:#fff;
+    padding: 6px 14px; border-radius: 999px;
+    letter-spacing: .5px;
+  }
+  .paw{ font-size: 20px; }
+
+  .mystery{
+    font-family:'Fredoka'; font-weight:700;
+    font-size: 34px; letter-spacing: 6px;
+    color: var(--frosting);
+    text-align:center; padding: 18px 0 10px;
+  }
+  .countdown-label{
+    text-align:center; font-size: 13px; font-weight:600;
+    color: var(--wine); opacity:.55; letter-spacing:.3px;
+  }
+  .countdown{
+    text-align:center; font-family:'Fredoka'; font-weight:600;
+    font-size: 15px; color: var(--hot-pink); margin-top:2px;
+  }
+
+  .reveal{ display:none; text-align:center; }
+  .reveal .icon{ font-size: 40px; display:block; margin-bottom: 6px; }
+  .reveal h3{
+    font-family:'Fredoka'; font-weight:600; font-size: 22px;
+    color: var(--hot-pink); margin-bottom: 6px;
+  }
+  .reveal p{ font-size: 15px; font-weight:600; opacity:.8; line-height:1.4; }
+
+  .card.open{ transform: scale(1.015); border-color: var(--frosting); }
+  .card.open .mystery, .card.open .countdown-label, .card.open .countdown{ display:none; }
+  .card.open .reveal{ display:block; animation: pop .5s ease; }
+
+  @keyframes pop{
+    0%{ transform: scale(.85); opacity:0; }
+    60%{ transform: scale(1.05); opacity:1; }
+    100%{ transform: scale(1); }
+  }
+
+  /* confetti burst */
+  .burst{ position:absolute; inset:0; pointer-events:none; overflow:visible; }
+  .burst span{
+    position:absolute; top:50%; left:50%; font-size:16px;
+    animation: fly 900ms ease-out forwards;
+  }
+  @keyframes fly{
+    to{ transform: translate(var(--x), var(--y)) scale(0.6) rotate(180deg); opacity:0; }
+  }
+
+  /* ---------- FOOTER ---------- */
+  .footer{
+    margin-top: 56px; text-align:center;
+  }
+  .footer .quote{
+    font-family:'Caveat', cursive; font-size: 28px; color: var(--wine);
+    max-width: 420px; margin: 0 auto 6px;
+  }
+  .footer .sign{
+    font-family:'Fredoka'; font-weight:600; font-size:14px; color: var(--hot-pink); opacity:.9;
+  }
+
+  @media (max-width:420px){
+    .card{ padding: 22px 18px 20px; }
+    .mystery{ font-size: 28px; letter-spacing:4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient" id="ambient"></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">un miau muy especial para ti</span>
+    <h1>Feliz cumpleaños,<br><span class="glow">Miaulissa</span> 🐾</h1>
+    <p class="sub">Hoy para la chigüira mas chigüira se prepararón algunas cositas... pero son secreto hasta que llegue la hora 🙊</p>
+    <div class="clock-pill"><span class="dot"></span><span id="liveClock">--:--:--</span></div>
+  </div>
+
+  <div class="timeline" id="timeline"></div>
+
+  <div class="footer">
+    <p class="quote">"hot girls never age, pero sí se consienten (a veces demasiado)" 🎂💗</p>
+    <p class="sign">con amor, yo</p>
+  </div>
+
+</div>
+
+<script>
+/* ============== CONFIG — EDITA AQUÍ ============== */
+// Fecha del cumpleaños (año, mes[1-12], día)
+const BIRTHDAY_DATE = { year: 2026, month: 7, day: 9 };
+
+// Actividades: hora en formato 24h { h, m }
+const EVENTS = [
+  {
+    time: {h: 8, m: 0},
+    icon: "🎀",
+    title: "¡Despierta, Miaulissa!",
+    desc: "Abre los ojos y sal a mirar el living... alguien decoró todo para ti. (spoiler: esto es solo el primer miau del día... quedan más sorpresas por delante 😼)"
+  },
+  {
+    time: {h: 12, m: 30},
+    icon: "🎂",
+    title: "Torta sorpresa",
+    desc: "Una torta de cumpleaños antes de que empiece el día."
+  },
+  {
+    time: {h: 14, m: 0},
+    icon: "🧖‍♀️",
+    title: "Spa day",
+    desc: "Cita en el spa — puro relax para la reina de la miauhouse."
+  },
+  {
+    time: {h: 16, m: 30},
+    icon: "🍰",
+    title: "Postre post-masaje",
+    desc: "Salimos por un postre rico para bajar la relajación del masaje."
+  },
+  {
+    time: {h: 20, m: 0},
+    icon: "🍣",
+    title: "Cena en ???",
+    desc: "Cena especial para Miaulissa para cerrar el día con broche de oro."
+  }
+];
+/* =================================================== */
+
+function targetDate(ev){
+  const d = new Date(BIRTHDAY_DATE.year, BIRTHDAY_DATE.month - 1, BIRTHDAY_DATE.day,
+                      ev.time.h, ev.time.m, 0, 0);
+  return d;
+}
+
+const timelineEl = document.getElementById("timeline");
+const cards = [];
+
+EVENTS
+  .slice()
+  .sort((a,b) => (a.time.h*60+a.time.m) - (b.time.h*60+b.time.m))
+  .forEach((ev, i) => {
+    const el = document.createElement("div");
+    el.className = "card";
+    const hh = String(ev.time.h).padStart(2,'0');
+    const mm = String(ev.time.m).padStart(2,'0');
+    el.innerHTML = `
+      <div class="card-top">
+        <span class="time-badge">${hh}:${mm}</span>
+        <span class="paw">🐾</span>
+      </div>
+      <div class="mystery">??? ??? ???</div>
+      <div class="countdown-label">se revela en</div>
+      <div class="countdown">--</div>
+      <div class="reveal">
+        <span class="icon">${ev.icon}</span>
+        <h3>${ev.title}</h3>
+        <p>${ev.desc}</p>
+      </div>
+      <div class="burst"></div>
+    `;
+    timelineEl.appendChild(el);
+    cards.push({ el, date: targetDate(ev), opened:false });
+  });
+
+function fmt(n){ return String(n).padStart(2,'0'); }
+
+function burstHearts(container){
+  const symbols = ["💗","💕","🐾","✨"];
+  for(let i=0;i<14;i++){
+    const s = document.createElement("span");
+    s.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    const angle = Math.random()*Math.PI*2;
+    const dist = 60 + Math.random()*70;
+    s.style.setProperty('--x', Math.cos(angle)*dist + "px");
+    s.style.setProperty('--y', Math.sin(angle)*dist + "px");
+    s.style.animationDelay = (Math.random()*120)+"ms";
+    container.appendChild(s);
+    setTimeout(()=> s.remove(), 1100);
+  }
+}
+
+function tick(){
+  const now = new Date();
+  document.getElementById("liveClock").textContent =
+    fmt(now.getHours())+":"+fmt(now.getMinutes())+":"+fmt(now.getSeconds());
+
+  cards.forEach(c => {
+    const diff = c.date - now;
+    if(diff <= 0){
+      if(!c.opened){
+        c.opened = true;
+        c.el.classList.add("open");
+        burstHearts(c.el.querySelector(".burst"));
+      }
+      return;
+    }
+    const totalSec = Math.floor(diff/1000);
+    const h = Math.floor(totalSec/3600);
+    const m = Math.floor((totalSec%3600)/60);
+    const s = totalSec%60;
+    c.el.querySelector(".countdown").textContent = `${h}h ${fmt(m)}m ${fmt(s)}s`;
+  });
+}
+tick();
+setInterval(tick, 1000);
+
+/* ambient floating icons */
+const ambient = document.getElementById("ambient");
+const ambientIcons = ["🐾","💗","🎀","✨"];
+for(let i=0;i<10;i++){
+  const s = document.createElement("span");
+  s.textContent = ambientIcons[i % ambientIcons.length];
+  s.style.left = Math.random()*100 + "%";
+  s.style.animationDuration = (14 + Math.random()*10) + "s";
+  s.style.animationDelay = (Math.random()*10) + "s";
+  ambient.appendChild(s);
+}
+</script>
+
+</body>
+</html>
